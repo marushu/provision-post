@@ -4,6 +4,12 @@ set -ex
 
 cd /vagrant
 
+if [ ! -e dist ]; then
+  mkdir dist
+else
+  echo 'You already have dis directory. :P'
+fi
+
 SYNCED_FOLDER=$(grep "synced_folder:" ./site.yml | sed -e s/synced_folder://g | tr -d '\"\ ' | sed -n 1p)
 
 VCCW_HOST_NAME=$(grep "hostname:" ./site.yml | sed -e s/hostname://g | tr -d '\"\ ' | sed -n 1p)
@@ -14,11 +20,13 @@ VCCW_SITE_URL=$(grep "wp_siteurl:" ./site.yml | sed -e "s/wp_siteurl://" | sed -
 
 THEME_SLUG=$(grep "hostname:" ./site.yml | sed -e s/hostname://g | tr -d '\"\ ' | sed -n 1p | awk -F '.' '{print $1}')
 
-if [ ! -e "${SYNCED_FOLDER}"/"${VCCW_HOST_NAME}""${VCCW_SITE_URL}"/wp-conteht/themes/"${THEME_SLUG}" ]; then
+echo /"${SYNCED_FOLDER}"/wp-conteht/themes/"${THEME_SLUG}"
 
-  if [ ! -e dist ]; then
-    mkdir dist
-  fi
+if [ ! -e /"${SYNCED_FOLDER}"/wp-conteht/themes/"${THEME_SLUG}" ]; then
+
+  :
+
+else
 
   cd ./wordpress  && wp scaffold _s ${THEME_SLUG} --activate --theme_name=${THEME_SLUG} --sassify
 
@@ -33,9 +41,5 @@ if [ ! -e "${SYNCED_FOLDER}"/"${VCCW_HOST_NAME}""${VCCW_SITE_URL}"/wp-conteht/th
   rm -rf ./package/
 
   curl https://raw.githubusercontent.com/marushu/build-theme/master/mixin.txt | awk '{print $0}' >> ./sass/style.scss
-
-else
-
-  echo 'Your project semms to have same name theme. :P'
 
 fi
