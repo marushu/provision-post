@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 cd /vagrant
 
@@ -12,6 +12,8 @@ fi
 
 SYNCED_FOLDER=$(grep "synced_folder:" ./site.yml | sed -e s/synced_folder://g | tr -d '\"\ ' | sed -n 1p)
 
+DOCUMENT_ROOT=$(grep "document_root:" ./site.yml | sed -e s/document_root://g | tr -d '\"\ ' | sed -n 1p)
+
 VCCW_HOST_NAME=$(grep "hostname:" ./site.yml | sed -e s/hostname://g | tr -d '\"\ ' | sed -n 1p)
 
 VCCW_SITE_URL=$(grep "wp_siteurl:" ./site.yml | sed -e "s/wp_siteurl://" | sed -e "s/\# Path to the WP_SITEURL like \"wp\"//g" | tr -d "\'\ ")
@@ -20,11 +22,10 @@ VCCW_SITE_URL=$(grep "wp_siteurl:" ./site.yml | sed -e "s/wp_siteurl://" | sed -
 
 THEME_SLUG=$(grep "hostname:" ./site.yml | sed -e s/hostname://g | tr -d '\"\ ' | sed -n 1p | awk -F '.' '{print $1}')
 
-echo /"${SYNCED_FOLDER}"/wp-conteht/themes/"${THEME_SLUG}"
+if [ -e ./"${SYNCED_FOLDER}"/wp-content/themes/"${THEME_SLUG}" ]; then
 
-if [ ! -e /"${SYNCED_FOLDER}"/wp-conteht/themes/"${THEME_SLUG}" ]; then
-
-  :
+  echo 'Theme directory already exists.'
+  exit 0
 
 else
 
