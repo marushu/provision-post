@@ -20,7 +20,7 @@ VCCW_SITE_URL=$(grep "wp_siteurl:" ./site.yml | sed -e "s/wp_siteurl://" | sed -
 
 [ -z "${VCCW_SITE_URL}" ] && VCCW_SITE_URL='' || VCCW_SITE_URL="/${VCCW_SITE_URL}"
 
-THEME_SLUG=$(grep "hostname:" ./site.yml | sed -e s/hostname://g | tr -d '\"\ ' | sed -n 1p | awk -F '.' '{print $1}')
+THEME_SLUG=$(grep "hostname:" ./site.yml | sed -e s/hostname://g | tr -d '\"\ '| sed -e s/-local//g | sed -n 1p | awk -F '.' '{print $1}')
 
 if [ -e ./"${SYNCED_FOLDER}"/wp-content/themes/"${THEME_SLUG}" ]; then
 
